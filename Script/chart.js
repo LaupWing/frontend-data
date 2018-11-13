@@ -107,10 +107,10 @@ function handleMouseOver(d, i){
   // d3.nest().key(function(d) { return d.genre; }).entries(jj2)
 
   // Implementatie van de codevoorbeeld
-  let currentData =[]
+  let arrayGenreSeparated =[]
   d.data.values.forEach(function(book){
     book.genre.forEach(function(single_genre){
-      currentData.push({
+      arrayGenreSeparated.push({
         titel: book.title,
         taal: book.taal,
         genre: single_genre,
@@ -120,8 +120,8 @@ function handleMouseOver(d, i){
   // console.log(currentData)
   let genre = d3.nest()
         .key(function(d) { return d.genre})
-        .entries(currentData)
-  console.log(d)
+        .entries(arrayGenreSeparated)
+  // console.log(currentData)
   console.log(genre)
   // console.log(d.data.values.map(function(d){d.genre}) })
   d3.select(this)

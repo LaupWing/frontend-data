@@ -28,7 +28,7 @@ let pieChart = svg.append("g").attr("transform",`translate(${margin.left},${marg
 let yAxis = d3.axisLeft(y)
 
 // The chart generators are declared here
-let area =
+// let area =
 
 
 console.log(margin)
