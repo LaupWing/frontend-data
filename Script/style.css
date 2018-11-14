@@ -18,6 +18,12 @@ svg{
 text{
   pointer-events: none;
 }
+.currentSectionText{
+  background: orange;
+}
+.currentSectionText text{
+  font-size: 32px;
+}
 .test{
   transform-origin: center;
 }

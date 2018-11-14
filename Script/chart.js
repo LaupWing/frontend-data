@@ -1,4 +1,5 @@
-d3.json('log.json').then(function(data){
+d3.json('log2.json').then(function(data){
+  console.log(data)
 const svg = d3.select("body").append("svg").attr("width", "100%").attr("height","100%")
 const colors = d3.scaleOrdinal(d3.schemePastel1);
 const height = 300;
@@ -101,10 +102,37 @@ legend.append("text")
 const scale  = 1;
 function handleMouseOver(d, i){
   // CODEVOORBEELD van stackoverflow voorbeeld: Linkje staat in de README
-  // jj = [{ genre: ['thriller', 'comedy'], title: 'foo'}, { genre: ['thriller', 'action'], title: 'papa'}]
-  //   jj2  = []
-  // jj.forEach(function(movie) { movie.genre.forEach( function(single_genre) { jj2.push({ language: movie.language, genre: single_genre, title: movie.title } ); } ); })
-  // d3.nest().key(function(d) { return d.genre; }).entries(jj2)
+  // Link stackoverflow: https://stackoverflow.com/questions/47581324/can-an-array-be-used-as-a-d3-nest-key
+  console.log(d)
+  // let currentSectionText = svg.select(".currentSectionText").data(d)
+  // currentSectionText.enter()
+  //                     .append("g")
+  //                     .attr("class","currentSectionText")
+  let currentSectionText = svg.append("g")
+      .attr("transform","translate(560,100)")
+      .attr("class", "currentSectionText")
+      // .data(d)
+
+  currentSectionText.append("text")
+                      .text(function(){return `Taal: ${capatalize(d.data.key)}, Aantal Boeken: ${d.data.values.length}  `})
+                      .attr("fill",function(){return colors(d.data.values.length)})
+
+  // svg.append("text")
+  //     .data(d)
+  //     .attr("class", "currentSection")
+  //     .text(function(d){return d.data.key})
+  //     .attr("transform","translate(100,350)")
+
+
+
+// let text = svg.select("g").selectAll("text").data(pieData)
+// text.enter().append("text").each(function(d){
+//   let center = segments.centroid(d);
+//   d3.select(this)
+//       .attr("x", center[0])
+//       .attr("y", center[1])
+//       .text(d.data.values.length)
+// })
 
   // Implementatie van de codevoorbeeld
   let arrayGenreSeparated =[]
@@ -131,13 +159,18 @@ function handleMouseOver(d, i){
 }
 
 function handleMouseOut(d, i){
+  svg.select(".currentSectionText")
+      .remove()
+
   d3.select(this)
       .transition()
       .duration(500)
       .attr("transform", `scale(${scale})`)
 }
 
-
+function capatalize(string){
+  return string.toUpperCase()
+}
 
 
 

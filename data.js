@@ -8,7 +8,7 @@ const client = new OBA ({
 });
 
 client.get('search',{
-  q: 'h',
+  q: 'a',
   facet: 'type(book)',
   sort: 'title',
   refine: true,
@@ -36,6 +36,6 @@ client.get('search',{
 })
   .then(results => {
     console.log(results)
-    fs.writeFile('./Script/log.json', JSON.stringify(results), 'utf8',function() {})
+    fs.writeFile('./Script/log2.json', JSON.stringify(results), 'utf8',function() {})
   })
     .catch(err=>console.log(err))
