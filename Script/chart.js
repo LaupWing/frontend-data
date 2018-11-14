@@ -69,7 +69,7 @@ let x= d3.scaleBand()
 
 
 // The elements are created here and assigned to an an variable
-let chartGroup = svg.append("g").attr("transform",`translate(${margin.left},300)`)
+let chartGroup = svg.append("g").attr("class","bar chart").attr("transform",`translate(${margin.left},300)`)
 let yAxis = d3.axisLeft(y)
 let xAxis = d3.axisBottom(x)
 // The chart generators are declared here
@@ -96,6 +96,7 @@ const legend = legends.enter()
                         .append("g")
                         .attr("class","legends")
                         .attr("transform", function(d,i){return`translate(0,${(i+1)*50})`})
+
 legend.append("rect")
         .attr("width", 40)
         .attr("height", 40)
@@ -159,7 +160,7 @@ function handleClick(d){
 
   const donut = d3.select(".donut.chart")
                     .transition()
-                    .duration(500)
+                    .duration(200)
                     .attr("transform", "translate(750,500)")
   donut.selectAll("path")
         .transition()
@@ -174,7 +175,8 @@ function handleClick(d){
         .transition()
         .duration(200)
         .attr("opacity", 0)
-
+  const barChart = d3.select(".bar.chart").transition()
+  barChart.duration(750).attr("transform","translate(50,600)")
   let arrayGenreSeparated =[]
   d.data.values.forEach(function(book){
     book.genre.forEach(function(single_genre){
@@ -218,6 +220,12 @@ function handleClick(d){
   //     .attr("x", function(d){return x(d.key)})
   //     .attr("fill", function(d,i){return colors(d.values.length)})
   //     .attr("y", function(d,i){return y(d.values.length);})
+  let legend = d3.selectAll(".legends").transition()
+  legend.duration(1000)
+          .attr("transform", function(d,i){return`translate(${((i+1)*50)+550},120)`})
+  legend.select("text")
+          .attr("x", 10)
+          .attr("y",25)
 
 
 
@@ -226,9 +234,11 @@ function handleClick(d){
 
 
 
+  console.log(this)
   // Disable Hover function in click state
   d3.selectAll(".sections").on("mouseover",null)
-  .on("mouseout",null)
+  .on("mouseout",null).on("click",null)
+  d3.select(this).on("click",function(){console.log("werkt")})
 }
 
 
