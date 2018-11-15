@@ -25,7 +25,6 @@ d3.json('log.json').then(function(data){
   makeRoundedChart(nestedData, segments, "donut chart", "sections")
 
   function makeRoundedChart(data, segment, groupname, partsname){
-
     let donutData = d3.pie().sort(null).value(function(d,i){return d.values.length})(data)
 
 

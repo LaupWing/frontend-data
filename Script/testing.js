@@ -80,7 +80,7 @@ d3.json('log.json').then(function(data){
   // The chart generators are declared here
   let rect = chartGroup.selectAll(".chartRect").data(data)
 
-  let makeBar = rect.enter().append("rect")
+  let rectEnter = rect.enter().append("rect")
                 .attr("class", "chartRect")
                 .merge(rect)
                 .attr("width", x.bandwidth())
@@ -88,7 +88,7 @@ d3.json('log.json').then(function(data){
                 .attr("x", function(d){return x(d.key)})
                 .attr("fill", function(d,i){return colors(d.values.length)})
                 .attr("y", function(d,i){return y(d.values.length);})
-  rect.exit().remove()
+                rect.exit().remove()
   chartGroup.append("g")
               .attr("class","axis y")
               .call(yAxis)
