@@ -6,7 +6,7 @@ const client = new OBA ({
   public: process.env.PUBLIC_KEY,
   secret: process.env.SECRET_KEY
 });
-
+// Alles wat je hieronder vind is gemaakt met behulp van WOUTER!!!
 client.get('search',{
   q: 'a',
   facet: 'type(book)',

@@ -92,6 +92,7 @@ d3.json('log.json').then(function(data){
               .call(xAxis)
 
   const legends = svg.append("g").attr("transform","translate(50,0)")
+                       .attr("class", "legend")
                        .selectAll(".legends").data(nestedData)
   const legend = legends.enter()
                           .append("g")
