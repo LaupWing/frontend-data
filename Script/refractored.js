@@ -97,7 +97,7 @@ function addInfo(data){
           .attr("x", function(d){return x(d.key)})
           .attr("fill", function(d,i){return colors(d.values.length)})
           .attr("y", function(d,i){return y(d.values.length);})
-          
+  let barExit = barChart.selectAll("rect").exit().remove()        
   barChart.append("g")
               .transition()
               .duration(750)
@@ -109,7 +109,6 @@ function addInfo(data){
               .attr("class","axis x")
               .attr("transform",`translate(0,${height})`)
               .call(xAxis)
-
   }
 
   function makeLegend(data, selection,groupName, partsname, x, y, size){
