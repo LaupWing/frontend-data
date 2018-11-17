@@ -188,8 +188,8 @@ function handleClick(d){
         .transition()
         .duration(200)
         .attr("opacity", 0)
-  const barChart = d3.select(".bar.chart").transition()
-  barChart.duration(750).attr("transform","translate(50,600)")
+  const barChart = d3.select(".bar.chart")
+  barChart.transition().duration(750).attr("transform","translate(50,600)")
   let arrayGenreSeparated =[]
   d.data.values.forEach(function(book){
     book.genre.forEach(function(single_genre){
@@ -217,16 +217,21 @@ function handleClick(d){
       .transition()
       .duration(750)
       .call(yAxis)
-  // const rect = svg.selectAll(".chartRect")
-  // rect.exit().remove().data(genre)
-  // rect.enter()
-  //         .append("rect")
-  //         .merge(rect)
-  //         .attr("width", x.bandwidth())
-  //         .attr("height", function(d,i){return height- y(d.values.length);})
-  //         .attr("x", function(d){return x(d.key)})
-  //         .attr("fill", function(d,i){return colors(d.values.length)})
-  //         .attr("y", function(d,i){return y(d.values.length);})
+
+  const rect = barChart.selectAll(".chartRect").data(genre)
+  rect.exit().remove()
+  rect
+      .attr("width", x.bandwidth())
+      .attr("height", function(d,i){return height- y(d.values.length);})
+      .attr("x", function(d){return x(d.key)})
+      .attr("y", function(d,i){return y(d.values.length);})
+  rect.enter()
+          .append("rect")
+          .attr("width", x.bandwidth())
+          .attr("height", function(d,i){return height- y(d.values.length);})
+          .attr("x", function(d){return x(d.key)})
+          .attr("fill", function(d,i){return colors(d.values.length)})
+          .attr("y", function(d,i){return y(d.values.length);})
 
   let legend = d3.selectAll(".legends").transition()
   legend.duration(1000)
@@ -260,7 +265,6 @@ function handleClick(d){
           .attr("y", 18)
           .style("font-size","12")
   // Einde function (to-do item) Kan in een fucntion gestopt worden als ik meer tijd heb.
-
   // OOk de code hieronder kan in een function gezet worden,
   // TODO: Make pie object in function
   let pieData = d3.pie().sort(null).value(function(d,i){return d.values.length})(genre)

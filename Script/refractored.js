@@ -1,18 +1,18 @@
 d3.json('log.json').then(function(data){
+  const margin = {top: 50, bottom: 50, left: 50, right: 50}
   const svg = d3.select("body").append("svg").attr("width", "100%").attr("height","100%")
+  const barChart = svg.append("g").attr("class","bar chart").attr("transform",`translate(${margin.left},300)`)
   const colors = d3.scaleOrdinal(d3.schemePastel1);
   const height = 300;
   const width = 600;
-  const margin = {top: 50, bottom: 50, left: 50, right: 50}
+
   // D3 data manupilatie variables
   let nestedData = d3.nest()// met nest kijk je naar platte data en return je het als nested object.
   .key(function(d) { return d.taal; })
   .entries(data);
 
   // console.log(nestedData)
-  const test = d3.nest()
-  .key(function(d){return d.values.title})
-  .entries(nestedData)
+
   //  TodoLIst
   // Shit functional maken er is heel veel code dubbelop zoals de barchart declaren!!
   let segments = d3.arc()
@@ -70,7 +70,7 @@ function addInfo(data){
 
   function makeBarChart(data){
 // Bar chart scale generators
-  const barWidth = 230
+  const barWidth = 500
   let y= d3.scaleLinear()
               .domain([0, d3.max(data,function(d){return d.values.length})])
               .range([height, 0])
@@ -81,13 +81,18 @@ function addInfo(data){
 
 
   // The elements are created here and assigned to an an variable
-  let barChart = svg.append("g").attr("class","bar chart").attr("transform",`translate(${margin.left},300)`)
   let yAxis = d3.axisLeft(y)
   let xAxis = d3.axisBottom(x)
   // The chart generators are declared here
-  let barEnter = barChart.selectAll("rect")
+  let rect = barChart.selectAll("rect")
                           .data(data)
-                          .enter().append("rect")
+  rect
+    .attr("width", x.bandwidth())
+    .attr("height", function(d,i){return height- y(d.values.length);})
+    .attr("x", function(d){return x(d.key)})
+    .attr("fill", function(d,i){return colors(d.values.length)})
+    .attr("y", function(d,i){return y(d.values.length);})
+  let barEnter = rect.enter().append("rect")
                           .attr("class", "chartRect")
   barEnter.transition()
           .delay(function(d,i){return i*100})
@@ -97,7 +102,7 @@ function addInfo(data){
           .attr("x", function(d){return x(d.key)})
           .attr("fill", function(d,i){return colors(d.values.length)})
           .attr("y", function(d,i){return y(d.values.length);})
-  let barExit = barChart.selectAll("rect").exit().remove()        
+  let barExit = barChart.selectAll("rect").exit().remove()
   barChart.append("g")
               .transition()
               .duration(750)
