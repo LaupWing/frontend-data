@@ -1,4 +1,4 @@
-/*
+*
 *    main.js
 *    Mastering Data Visualization with D3.js
 *    5.6 - Making our chart dynamic
@@ -111,4 +111,3 @@ function update(data) {
     yLabel.text(label);
 
 }
-//

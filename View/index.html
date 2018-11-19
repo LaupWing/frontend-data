@@ -9,6 +9,25 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <header>
+    <nav>
+      <select name="sortBy" id="sortBy">
+        <option value="" disabled selected>Sorteer op:</option>
+        <option value="lowFirst">Laag naar Hoog</option>
+        <option value="HighFirst">Hoog naar laag</option>
+      </select>
+      <select name="moveItems" id="moveItems">
+        <option value="" disabled selected>Verplaatsing Toggle</option>
+        <option value="on">AAN</option>
+        <option value="off">UIT</option>
+      </select>
+      <select name="colorChanging" id="colorChanging">
+        <option value="" disabled selected>Kleuren Veranderen</option>
+        <option value="Kleuren1">Kleuren Set 1</option>
+        <option value="Kleuren2">Kleuren Set 2</option>
+      </select>
+    </nav>
+  </header>
   <script src="/refractored.js"></script>
 </body>
 </html>
