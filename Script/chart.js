@@ -8,8 +8,6 @@ d3.json('log2.json').then(function(data){
   //  TodoLIst
   // Shit functional maken er is heel veel code dubbelop zoals de barchart declaren!!
 
-
-
   // D3 data manupilatie variables
   let nestedData = d3.nest()// met nest kijk je naar platte data en return je het als nested object.
         .key(function(d) { return d.taal; })

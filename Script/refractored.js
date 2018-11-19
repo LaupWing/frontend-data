@@ -29,9 +29,7 @@ d3.json('log.json').then(function(data){
   const sortBy = d3.select("#sortBy")
   const changeColor = d3.select("#colorChanging")
   const moveItems = d3.select("#moveItems")
-
-
-
+  const reset = d3.select("#reset")
 
   // #2: Events koppelen aan de navigatie Items
   //-------------------------------------------------------------------------------------
@@ -45,6 +43,8 @@ d3.json('log.json').then(function(data){
       d3.select(".bar.chart").call(d3.drag().on("drag", dragged))
       d3.select(".donut.chart").call(d3.drag().on("drag", dragged))
       d3.select(".legend").call(d3.drag().on("drag", dragged))
+      d3.select(".genre_legend").call(d3.drag().on("drag", dragged))
+      d3.select(".pie.chart").call(d3.drag().on("drag", dragged))
     }else{
       console.log("uit")
       d3.select(".bar.chart").on("drag", null)
@@ -57,6 +57,7 @@ d3.json('log.json').then(function(data){
   changeColor.on("change", function(){
     let color = changeColor.node().value;
     let legends = d3.selectAll(".legends");
+    let genreLegends = d3.selectAll(".genre_legends")
     switch(color){
       case "Kleuren1":
       console.log("kleuren1 okay")
@@ -77,10 +78,33 @@ d3.json('log.json').then(function(data){
              .duration(1000)
              .delay(function(d,i){return i *200})
              .attr("fill", function(d,i){return colors2(d.values.length)})
+      svg.selectAll(".pie.sections")
+             .transition()
+             .duration(1000)
+             .delay(function(d,i){return i *200})
+             .attr("fill", function(d,i){return colors2(d.values.length)})
+      genreLegends.selectAll("rect")
+             .transition()
+             .duration(1000)
+             .delay(function(d,i){return i *200})
+             .attr("fill", function(d,i){return colors2(i)})
+      // if(typeof d3.select(".pie.chart") === "undefined"){
+      //   console.log("jaas")
+      // }else{
+      //   console.log("het is er niet")
+      // }
       break;
     }
   });
 
+  reset.on("click", function(){
+    console.log("testing")
+    d3.select(".bar.chart").attr("transform", "translate(50,300)")
+    d3.select(".donut.chart").attr("transform", "translate(750,400)")
+    d3.select(".legend").attr("transform", "translate(50,0)")
+    d3.select(".genre_legend").attr("transform", "translate(50,40)")
+    d3.select(".pie.chart").attr("transform", "translate(750,502)")
+  })
 
   // Data sorteren
   sortBy.on("change", function(){
@@ -275,6 +299,10 @@ d3.json('log.json').then(function(data){
       height =  100
       y.range([height, 0])
       d3.select(".axis.y").attr("transform", `translate(0, ${height})`)
+    }else{
+      height = 200
+      y.range([height, 0])
+      // d3.select(".axis.y").attr("transform", `translate(0, ${height})`)
     }
   }
 
@@ -452,7 +480,7 @@ function capatalize(string){
 
 // Deze function is zwaar onnodig als de charts gemaakt worden in een function iig het maken van de charts kan gedaan wordne in een function
 function resetToDefault(){
-
+  let flag = height
   x.domain(nestedData.map(function(d){return d.key})).range([0, barWidth])
   y.domain([0, d3.max(nestedData, function(d){return d.values.length})])
   // const currentText = d3.select(".currentSectionText")
@@ -471,7 +499,14 @@ function resetToDefault(){
           .transition()
           .duration(900)
           .call(yAxis)
+  console.log(height)
   updateBarchart(nestedData, "not indexed")
+
+  // Bug fix voor verplaatsing van de y as en rect als de height 100 is
+  if(flag === 100){
+    svg.select(".axis.y").attr("transform","translate(0,0)")
+    svg.selectAll(".chartRect").attr("transform","translate(0,0)")
+  }
 
   let genreLegend = d3.select(".genre_legend").transition()
   genreLegend.duration(600)
@@ -504,6 +539,7 @@ function resetToDefault(){
                                        .attr("d", oldSegment)
                                        .style("opacity", 1)
                                        .attr("transform","scale(1)")
+
   setTimeout(function(){
     donutSections.on("mouseover", handleMouseOver)
                  .on("mouseout", handleMouseOut)

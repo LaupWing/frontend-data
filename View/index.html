@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <script src="https://d3js.org/d3.v5.js"></script>
   <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
   <header>
     <nav>
@@ -16,11 +18,14 @@
         <option value="lowFirst">Laag naar Hoog</option>
         <option value="HighFirst">Hoog naar laag</option>
       </select>
-      <select name="moveItems" id="moveItems">
+      <div class="moveToggle">
+        <select name="moveItems" id="moveItems">
         <option value="" disabled selected>Verplaatsing Toggle</option>
         <option value="on">AAN</option>
         <option value="off">UIT</option>
       </select>
+      <button id="reset">Reset</button>
+      </div>
       <select name="colorChanging" id="colorChanging">
         <option value="" disabled selected>Kleuren Veranderen</option>
         <option value="Kleuren1">Kleuren Set 1</option>
@@ -30,4 +35,5 @@
   </header>
   <script src="/refractored.js"></script>
 </body>
+
 </html>
