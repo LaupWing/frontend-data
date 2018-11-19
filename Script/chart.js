@@ -1,4 +1,4 @@
-d3.json('log.json').then(function(data){
+d3.json('log2.json').then(function(data){
   console.log(data)
   const svg = d3.select("body").append("svg").attr("width", "100%").attr("height","100%")
   const colors = d3.scaleOrdinal(d3.schemePastel1);
@@ -204,8 +204,9 @@ function handleClick(d){
   let genre = d3.nest()
   .key(function(d) { return d.genre})
   .entries(arrayGenreSeparated)
+  console.log(genre)
   let genreCount = genre.map(function(d){return d.key})
-
+  console.log(genreCount)
   x.domain(genreCount).range([0, xAsLength(genreCount.length)])
   y.domain([0, d3.max(genre, function(d){return d.values.length})])
 
@@ -304,10 +305,23 @@ function handleClick(d){
 
 
 function xAsLength(genres){
-  if(genres > 10){
-    return 1200
-  }else{
-    return 800
+  // if(genres > 10){
+  //   return 1200
+  // }else{
+  //   return 800
+  // }
+  switch(true){
+    case genres <= 3 : return 230
+    break;
+    case genres > 3 && genres <= 5 : return 500
+    break;
+    case genres > 5 && genres <= 8 : return 750
+    break;
+    case genres > 8 && genres <= 11 : return 1000
+    break;
+    case genres > 11 : return 1200
+    break;
+
   }
 }
 

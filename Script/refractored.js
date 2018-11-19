@@ -1,31 +1,57 @@
 d3.json('log.json').then(function(data){
   const margin = {top: 50, bottom: 50, left: 50, right: 50}
   const svg = d3.select("body").append("svg").attr("width", "100%").attr("height","100%")
+  svg.append("button")
   const barChart = svg.append("g").attr("class","bar chart").attr("transform",`translate(${margin.left},300)`)
   const colors = d3.scaleOrdinal(d3.schemePastel1);
   const height = 300;
   const width = 600;
+  const nestedData = d3.nest()// met nest kijk je naar platte data en return je het als nested object.
+                        .key(function(d) { return d.taal; })
+                        .entries(data);
 
+  // Bar chart scale generators
+
+  const talenArray =  nestedData.map(function(d,i){return d.key})
+  console.log(talenArray)
+  const barWidth = 500
+  let y= d3.scaleLinear()
+            .domain([0, d3.max(nestedData,function(d){return d.values.length})])
+            .range([height, 0])
+  let x= d3.scaleBand()
+            .domain(nestedData.map(function(d){return d.key}))
+            .range([0, xAsLength(talenArray.length)])
+            .paddingInner(0.15)
+
+  // The elements are created here and assigned to an an variable
+  let yAxis = d3.axisLeft(y)
+  let xAxis = d3.axisBottom(x)
+  barChart.append("g")
+            .transition()
+            .duration(750)
+            .attr("class","axis y")
+            .call(yAxis)
+  barChart.append("g")
+            .transition()
+            .duration(750)
+            .attr("class","axis x")
+            .attr("transform",`translate(0,${height})`)
+            .call(xAxis)
   // D3 data manupilatie variables
-  let nestedData = d3.nest()// met nest kijk je naar platte data en return je het als nested object.
-  .key(function(d) { return d.taal; })
-  .entries(data);
 
-  // console.log(nestedData)
 
   //  TodoLIst
   // Shit functional maken er is heel veel code dubbelop zoals de barchart declaren!!
   let segments = d3.arc()
-    .innerRadius(180)
-    .outerRadius(250)
-    .padAngle(0.2)
-    .padRadius(10)
+                    .innerRadius(180)
+                    .outerRadius(250)
+                    .padAngle(0.2)
+                    .padRadius(10)
+  makeRoundedChart(nestedData, segments, "donut chart", "sections","not indexed","Home", true)
+  updateBarchart(nestedData, "not indexed")
+  makeLegend(nestedData, ".legends", "legend", "legends", "not indexed",function(d,i){return colors(d.values.length)}, 45, 25, 40)
 
-  makeRoundedChart(nestedData, segments, "donut chart", "sections","Home", true)
-  makeBarChart(nestedData)
-  makeLegend(nestedData, ".legends", "legend", "legends", 45, 25, 40)
-
-  function makeRoundedChart(data, segment, groupname, partsname, events, add){
+  function makeRoundedChart(data, segment, groupname, partsname, colorStyle, startingColor, events, add){
     let donutData = d3.pie().sort(null).value(function(d,i){return d.values.length})(data)
 
     const sections = svg.append("g")
@@ -35,21 +61,36 @@ d3.json('log.json').then(function(data){
                           .data(donutData)
 
 
-    sections.enter()
-              .append("path")
-              .attr("class",partsname)
-              .attr("fill", function(d,i){return colors(d.data.values.length)})
+    const enterSection = sections.enter()
+                                  .append("path")
+                                  .attr("class",partsname)
+
+    enterSection.attr("fill", startingColorPie(startingColor))
+              .transition()
+              .duration(1000)
               .attr("d", segment)
+              .delay(function(d,i){return i*100})
+              .duration(2000)
+              .delay(function(d,i){return i*100})
+              .attr("fill", setColorIndexPie(colorStyle))
     if(add === true){
       addInfo(donutData)
     }else{
       console.log("word niet toegevoegd")
     }
+    const donutSections =  d3.selectAll(".sections")
+    console.log(events)
+    if(events){
+      setTimeout(function(){
+        donutSections.on("mouseover", handleMouseOver)
+        .on("mouseout", handleMouseOut)
+        .on("click", handleClick)
+      }, 1000);
+    }else{
+      donutSections.on("mouseover",null)
+      .on("mouseout",null).on("click",null)
+    }
 
-    d3.selectAll(".sections")
-              .on("mouseover", handleMouseOver)
-              .on("mouseout", handleMouseOut)
-              .on("click", handleClick)
   }
 
 function addInfo(data){
@@ -64,75 +105,100 @@ function addInfo(data){
 }
 
 
+function startingColorPie(startingColor){
+  if(typeof startingColor === "undefined"){
+    return function(d,i){return colors(d.data.values.length)}
+  }else{
+    return startingColor
+  }
+}
+
+function setColorIndexPie(colorStyle){
+  console.log("1", colorStyle);
+  if(colorStyle === "indexed"){
+    return function(d,i){return colors(i)}
+  }else{
+    return function(d,i){return colors(d.data.values.length)}
+    console.log("2", colorStyle);
+  }
+}
+
+  function setColorIndex(colorStyle){
+    if(colorStyle === "indexed"){
+      return function(d,i){return colors(i)}
+    }else{
+      return function(d,i){return colors(d.values.length)}
+    }
+  }
+
 
   // Pie declaratie's en het opzetten van de pie NOTE: Dit kan allemaal in een funciton gestopt worden
   // TODO: IN function zetten
 
-  function makeBarChart(data){
-// Bar chart scale generators
-  const barWidth = 500
-  let y= d3.scaleLinear()
-              .domain([0, d3.max(data,function(d){return d.values.length})])
-              .range([height, 0])
-  let x= d3.scaleBand()
-              .domain(data.map(function(d){return d.key}))
-              .range([0, barWidth])
-              .paddingInner(0.15)
+  function updateBarchart(data, colorStyle){
+    // The chart generators are declared here
+    let talenArray = data.map(function(d,i){return d.key})
+    y.domain([0, d3.max(data,function(d){return d.values.length})])
+    x.domain(data.map(function(d){return d.key}))
+     .range([0, xAsLength(talenArray.length)])
 
+    let rect = barChart.selectAll("rect")
+                       .data(data)
+    rect.exit().remove()
+    rect.attr("width", x.bandwidth())
+        .attr("height", function(d,i){return height- y(d.values.length);})
+        .attr("x", function(d){return x(d.key)})
+        .attr("fill", setColorIndex(colorStyle))
+        .attr("y", function(d,i){return y(d.values.length);})
 
-  // The elements are created here and assigned to an an variable
-  let yAxis = d3.axisLeft(y)
-  let xAxis = d3.axisBottom(x)
-  // The chart generators are declared here
-  let rect = barChart.selectAll("rect")
-                          .data(data)
-  rect
-    .attr("width", x.bandwidth())
-    .attr("height", function(d,i){return height- y(d.values.length);})
-    .attr("x", function(d){return x(d.key)})
-    .attr("fill", function(d,i){return colors(d.values.length)})
-    .attr("y", function(d,i){return y(d.values.length);})
-  let barEnter = rect.enter().append("rect")
-                          .attr("class", "chartRect")
-  barEnter.transition()
-          .delay(function(d,i){return i*100})
-          .duration(750)
-          .attr("width", x.bandwidth())
-          .attr("height", function(d,i){return height- y(d.values.length);})
-          .attr("x", function(d){return x(d.key)})
-          .attr("fill", function(d,i){return colors(d.values.length)})
-          .attr("y", function(d,i){return y(d.values.length);})
-  let barExit = barChart.selectAll("rect").exit().remove()
-  barChart.append("g")
+    let barEnter = rect.enter()
+                       .append("rect")
+                       .attr("class", "chartRect")
+
+    barEnter.transition()
+            .delay(function(d,i){return i*100})
+            .duration(750)
+            .attr("width", x.bandwidth())
+            .attr("height", function(d,i){return height- y(d.values.length);})
+            .attr("x", function(d){return x(d.key)})
+            .attr("fill", setColorIndex(colorStyle))
+            .attr("y", function(d,i){return y(d.values.length);})
+
+    // let barExit = barChart.selectAll("rect")
+    //                       .exit()
+    //                       .remove()
+
+    barChart.select(".axis.x")
               .transition()
               .duration(750)
-              .attr("class","axis y")
-              .call(yAxis)
-  barChart.append("g")
-              .transition()
-              .duration(750)
-              .attr("class","axis x")
-              .attr("transform",`translate(0,${height})`)
               .call(xAxis)
+    barChart.select(".axis.y")
+              .transition()
+              .duration(750)
+              .call(yAxis)
   }
 
-  function makeLegend(data, selection,groupName, partsname, x, y, size){
+  function makeLegend(data, selection,groupName, partsname, colorStyle, startingColor, x, y, size){
 
-  const legends = svg.append("g").attr("transform","translate(50,0)")
-                       .attr("class", groupName)
-                       .selectAll(selection).data(data)
-  const legend = legends.enter()
-                          .append("g")
-                          .attr("class",partsname)
-                          .attr("transform", function(d,i){return`translate(0,${(i+1)*50})`})
-  legend.append("rect")
-          .attr("width", size)
-          .attr("height", size)
-          .attr("fill", function(d,i){return colors(d.values.length)})
-  legend.append("text")
-          .text(function(d){return d.key})
-          .attr("x", x)
-          .attr("y", y)
+    const legends = svg.append("g").attr("transform","translate(50,0)")
+                         .attr("class", groupName)
+                         .selectAll(selection).data(data)
+    const legend = legends.enter()
+                            .append("g")
+                            .attr("class",partsname)
+                            .attr("transform", function(d,i){return`translate(0,${(i+1)*50})`})
+    legend.append("rect")
+            .attr("fill", startingColorPie(startingColor))
+            .attr("width", size)
+            .attr("height", size)
+            .transition()
+            .duration(1000)
+            .delay(function(d,i){return i*100})
+            .attr("fill", setColorIndex(colorStyle))
+    legend.append("text")
+            .text(function(d){return d.key})
+            .attr("x", x)
+            .attr("y", y)
   }
 
 
@@ -141,26 +207,25 @@ function addInfo(data){
 
   const scale  = 1;
   function handleMouseOver(d, i){
-  // CODEVOORBEELD van stackoverflow voorbeeld: Linkje staat in de README
-  // Link stackoverflow: https://stackoverflow.com/questions/47581324/can-an-array-be-used-as-a-d3-nest-key
+    // CODEVOORBEELD van stackoverflow voorbeeld: Linkje staat in de README
+    // Link stackoverflow: https://stackoverflow.com/questions/47581324/can-an-array-be-used-as-a-d3-nest-key
 
-  // let currentSectionText = svg.select(".currentSectionText").data(d)
-  // currentSectionText.enter()
-  //                     .append("g")
-  //                     .attr("class","currentSectionText")
-  let currentSectionText = svg.append("g")
-      .attr("transform","translate(560,100)")
-      .attr("class", "currentSectionText")
-      // .data(d)
+    // let currentSectionText = svg.select(".currentSectionText").data(d)
+    // currentSectionText.enter()
+    //                     .append("g")
+    //                     .attr("class","currentSectionText")
+    let currentSectionText = svg.append("g")
+        .attr("transform","translate(560,100)")
+        .attr("class", "currentSectionText")
 
-  currentSectionText.append("text")
-                      .text(function(){return `Taal: ${capatalize(d.data.key)}, Aantal Boeken: ${d.data.values.length}  `})
-                      .attr("fill",function(){return colors(d.data.values.length)})
+    currentSectionText.append("text")
+                        .text(function(){return `Taal: ${capatalize(d.data.key)}, Aantal Boeken: ${d.data.values.length}  `})
+                        .attr("fill",function(){return colors(d.data.values.length)})
 
-  d3.select(this)
-      .transition()
-      .duration(200)
-      .attr("transform", `scale(${scale*1.1})`)
+    d3.select(this)
+        .transition()
+        .duration(200)
+        .attr("transform", `scale(${scale*1.1})`)
  }
 
 
@@ -180,11 +245,9 @@ function handleMouseOut(d, i){
 
 
 
-
-
-
 function handleClick(d){
-
+  console.log(d)
+  console.log(this)
   const current = this
   let currentSegment = d3.arc()
                         .innerRadius(180)
@@ -232,111 +295,52 @@ function handleClick(d){
   .entries(arrayGenreSeparated)
   let genreCount = genre.map(function(d){return d.key})
 
-  makeBarChart(genre)
-  // x.domain(genreCount).range([0, xAsLength(genreCount.length)])
-  // y.domain([0, d3.max(genre, function(d){return d.values.length})])
-  //
-  // barChart.select(".axis.x")
-  //     .transition()
-  //     .duration(750)
-  //     .call(xAxis)
-  // barChart.select(".axis.y")
-  //     .transition()
-  //     .duration(750)
-  //     .call(yAxis)
-  // const rect = svg.selectAll(".chartRect")
-  // rect.exit().remove().data(genre)
-  // rect.enter()
-  //         .append("rect")
-  //         .merge(rect)
-  //         .attr("width", x.bandwidth())
-  //         .attr("height", function(d,i){return height- y(d.values.length);})
-  //         .attr("x", function(d){return x(d.key)})
-  //         .attr("fill", function(d,i){return colors(d.values.length)})
-  //         .attr("y", function(d,i){return y(d.values.length);})
+  updateBarchart(genre, "indexed")
 
-  let legend = d3.selectAll(".legends").transition()
-  legend.duration(1000)
+
+  let legends = d3.selectAll(".legends").transition()
+  legends.duration(1000)
           .attr("transform", function(d,i){return`translate(${((i+1)*50)+550},120)`})
-  legend.select("text")
+  legends.select("text")
           .attr("x", 10)
           .attr("y",25)
 
 
   // Setting the genre Legends
   // Dit kan later in een function gestopt word voor simpelifcatie
-  makeLegend(genre, ".genre_legend", "genre_legend", ".genre_legends", 35, 16, 25)
-  svg.select(".genre_legend").attr("transform", function(d,i){return`translate(10,${(i+1)*30})`})
-
-  // const genreLegends = svg.append("g").attr("transform","translate(50,0)")
-  //                           .attr("class","genre_legends")
-  //                           .selectAll(".genre_legend").data(genre)
-  // const genreLegend = genreLegends.enter()
-  //                         .append("g")
-  //                         .attr("class","genre_legend")
-  //                         .attr("transform", function(d,i){return`translate(0,${(i+1)*30})`})
-  //
-  // genreLegend.append("rect")
-  //         .attr("width", 25)
-  //         .attr("height", 25)
-  //         .attr("fill",function(){return colors(d.data.values.length)})
-  //         .transition()
-  //         .duration(1000)
-  //         .delay(function(d,i){return i*100})
-  //         .attr("fill", function(d,i){return colors(i)})
-  // genreLegend.append("text")
-  //         .text(function(d){return d.key})
-  //         .attr("x", 35)
-  //         .attr("y", 18)
-  //         .style("font-size","12")
-  // Einde function (to-do item) Kan in een fucntion gestopt worden als ik meer tijd heb.
-
-  // OOk de code hieronder kan in een function gezet worden,
-  // TODO: Make pie object in function
-  let pieData = d3.pie().sort(null).value(function(d,i){return d.values.length})(genre)
+  makeLegend(genre, ".genre_legend", "genre_legend", "genre_legends", "indexed",colors(d.data.values.length), 35, 16, 25)
+  const genreLegend= svg.select(".genre_legend").attr("transform", "translate(50,0)")
+  let genreLegends = genreLegend.selectAll(".genre_legends").attr("transform", function(d,i){return`translate(0,${(i+1)*30})`})
+  genreLegends.selectAll("text")
+               .style("font-size", "12")
+               .attr("fill", colors(d.data.values.length))
 
   let pieSegments = d3.arc()
-                    .innerRadius(0)
-                    .outerRadius(230)
-                    .padAngle(0.2)
-                    .padRadius(10)
+                        .innerRadius(0)
+                        .outerRadius(230)
+                        .padAngle(0.2)
+                        .padRadius(10)
 
-  makeRoundedChart(genre, pieSegments, "pie chart", "pie sections", "y", false)
+  makeRoundedChart(genre, pieSegments, "pie chart", "pie sections", "indexed", colors(d.data.values.length),false, false)
   svg.select(".pie.chart").attr("transform", "translate(750,502)")
-  // const sections = svg.append("g")
-  //                     .attr("transform", "translate(750,502)")
-  //                     .attr("class", "pie chart")
-  //                     .selectAll("path")
-  //                     .data(pieData)
-  //
-  //
-  // let section = sections.enter()
-  //                         .append("path")
-  //                         .attr("class","pie sections")
-  // section.attr("fill",function(){return colors(d.data.values.length)})
-  //        .transition()
-  //        .duration(1000)
-  //        .attr("d", segments)
-  //        .delay(function(d,i){return i*100})
-  //        .duration(2000)
-  //        .delay(function(d,i){return i*100})
-  //        .attr("fill", function(d,i){return colors(i)})
-  /
-
-
-
-  // Disable Hover function in click state
-  d3.selectAll(".sections").on("mouseover",null)
-  .on("mouseout",null).on("click",null)
   d3.select(this).on("click",resetToDefault)
+
 }
 
 
 function xAsLength(genres){
-  if(genres > 10){
-    return 1200
-  }else{
-    return 800
+  switch(true){
+    case genres <= 5 : return 400
+    break;
+    case genres > 5 && genres <= 6 : return 600
+    break;
+    case genres > 6 && genres <= 8 : return 750
+    break;
+    case genres > 8 && genres <= 11 : return 1000
+    break;
+    case genres > 11 : return 1200
+    break;
+
   }
 }
 
@@ -350,42 +354,59 @@ function resetToDefault(){
 
   x.domain(nestedData.map(function(d){return d.key})).range([0, barWidth])
   y.domain([0, d3.max(nestedData, function(d){return d.values.length})])
+  // const currentText = d3.select(".currentSectionText")
+  // currentText.select("text").remove()
   const barChart = d3.select(".bar.chart").transition()
-  barChart.duration(750).attr("transform","translate(50,300)")
-  barChart.select(".axis.x")
-      .transition()
-      .duration(900)
-      .call(xAxis)
-  barChart.select(".axis.y")
-      .transition()
-      .duration(900)
-      .call(yAxis)
 
-  let genreLegend = d3.select(".genre_legends").transition()
+  barChart.duration(750)
+          .attr("transform","translate(50,300)")
+
+  barChart.select(".axis.x")
+          .transition()
+          .duration(900)
+          .call(xAxis)
+
+  barChart.select(".axis.y")
+          .transition()
+          .duration(900)
+          .call(yAxis)
+  updateBarchart(nestedData, "not indexed")
+
+  let genreLegend = d3.select(".genre_legend").transition()
   genreLegend.duration(600)
               .attr("transform","translate(-200, 0)")
               .delay(600)
               .remove()
+
   let legends = d3.selectAll(".legends").transition()
-  legends.duration(750).attr("transform", function(d,i){return`translate(0,${(i+1)*50})`})
-  legends.duration(750).select("text").attr("x", 45).attr("y", 25)
+  legends.duration(750)
+         .attr("transform", function(d,i){return`translate(0,${(i+1)*30})`})
+  legends.duration(750)
+         .select("text").attr("x", 45)
+         .attr("y", 25)
 
   let pieChart = d3.select(".pie.chart").transition()
-  pieChart.duration(750).attr("transform"," translate(750,502), scale(0)").remove()
+  pieChart.duration(750)
+          .attr("transform"," translate(750,502), scale(0)")
+          .remove()
 
   let oldSegment = d3.arc()
-                        .innerRadius(180)
-                        .outerRadius(250)
-                        .padAngle(0.2)
-                        .padRadius(10)
+                     .innerRadius(180)
+                     .outerRadius(250)
+                     .padAngle(0.2)
+                     .padRadius(10)
+
   let donutChart = d3.select(".donut.chart")
   let donutSections = donutChart.selectAll(".sections")
-  donutSections.transition().duration(750).attr("d", oldSegment).style("opacity", 1).attr("transform","scale(1), translate(0,-100)")
-  donutSections.on("mouseover", handleMouseOver)
-  .on("mouseout", handleMouseOut)
-  .on("click", handleClick)
+  donutSections.transition()
+               .duration(750)
+               .attr("d", oldSegment)
+               .style("opacity", 1)
+               .attr("transform","scale(1)")
+  setTimeout(function(){
+    donutSections.on("mouseover", handleMouseOver)
+                 .on("mouseout", handleMouseOut)
+                 .on("click", handleClick)
+  }, 1000);
 }
-
-
-
 })

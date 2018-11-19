@@ -8,7 +8,7 @@ const client = new OBA ({
 });
 // Alles wat je hieronder vind is gemaakt met behulp van WOUTER!!!
 client.get('search',{
-  q: 'a',
+  q: 'harry potter',
   facet: 'type(book)',
   sort: 'title',
   refine: true,
