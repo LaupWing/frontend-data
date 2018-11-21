@@ -16,14 +16,11 @@ d3.json('log.json').then(function(data){
   let height = 200;
   const width = 600;
 
-
-  // Hier word het huidige gebruikte dataset opgeslagen
-  let currentData = "nog geen data";
-
   // Data kolommen worden veranderd naar talen per kolom
   const nestedData = d3.nest()
                         .key(function(d) { return d.taal; })
                         .entries(data);
+  let itemClicked = nestedData;
 
   //  De navigatie Items ophalen en in variables stoppen
   const sortBy = d3.select("#sortBy")
@@ -88,11 +85,6 @@ d3.json('log.json').then(function(data){
              .duration(1000)
              .delay(function(d,i){return i *200})
              .attr("fill", function(d,i){return colors2(i)})
-      // if(typeof d3.select(".pie.chart") === "undefined"){
-      //   console.log("jaas")
-      // }else{
-      //   console.log("het is er niet")
-      // }
       break;
     }
   });
@@ -106,17 +98,50 @@ d3.json('log.json').then(function(data){
     d3.select(".pie.chart").attr("transform", "translate(750,502)")
   })
 
-  // Data sorteren
-  sortBy.on("change", function(){
-    let sort = sortBy.node().value
-    if(sort === "HighFirst"){
-      console.log(currentData)
-      // console.log(nestedData.sort(function(x,y){return d3.descending(x.values.length, y.values.length)}))
-      // let descendingData = nestedData.sort(function(x,y){return d3.descending(x.values.length, y.values.length)})
-      // updateBarchart(descendingData)
-    }else{console.log("test")}
-  })
 
+  // Poging tot functional maken van de sorteer optie
+  // sortBy.on("change", sortData(currentDataset(), "sortBy.node().value"))
+  //
+  // function sortData(data, method){
+  // if(method === "HighFirst"){
+  //   let descendingData = data.sort(function(a,b){return d3.descending(a.values.length, b.values.length)})
+  //   updateBarchart(descendingData, indexedOrNot())
+  // }else{
+  //   let descendingData = data.sort(function(a,b){return d3.ascending(a.values.length, b.values.length)})
+  //   updateBarchart(descendingData, indexedOrNot())
+  //     }
+  // }
+function indexedOrNot(){
+  if(itemClicked === nestedData){
+    return "not indexed"
+  }else{
+    return "indexed"
+  }
+}
+function currentDataset(){
+  if(itemClicked === nestedData){
+    return nestedData
+  }else{
+    return getGenres(nestedData[itemClicked])
+  }
+}
+sortBy.on("change", function(){
+  let value = sortBy.node().value
+  if(value === "HighFirst"){
+    let descendingData = currentDataset().sort(function(a,b){return d3.descending(a.values.length, b.values.length)})
+    updateBarchart(descendingData, indexedOrNot()).transition()
+					.delay(function(d, i) {
+						return i * 50;  // gives it a smoother effect
+					})
+					.duration(1000)
+
+  }else{
+    let descendingData = currentDataset().sort(function(a,b){return d3.ascending(a.values.length, b.values.length)})
+    updateBarchart(descendingData, indexedOrNot())
+
+  }
+})
+// // Data sorteren
   // #3: Aanmaken van de schalen van de x en y as en waardes voor de pie/donut chart
   //-------------------------------------------------------------------------------------
 
@@ -189,7 +214,7 @@ d3.json('log.json').then(function(data){
     if(add === true){
       addInfo(donutData)
     }else{
-      console.log("word niet toegevoegd")
+      // console.log("word niet toegevoegd")
     }
     const donutSections =  d3.selectAll(".donut.sections")
     if(events){
@@ -374,9 +399,47 @@ function handleMouseOut(d, i){
       .attr("transform", `scale(${scale})`)
 }
 
+// Genres worden uit een specifieke selectie gehaald. Er is .data variant, omdat
+// de pie chart de data in een data property stopt vandaar dat er eerst gechecked\
+// moet worden of data in het data object zit.
+function getGenres(d){
+  let arrayGenreSeparated =[]
+  if(typeof d.data === "undefined"){
+    d.values.forEach(function(book){
+      book.genre.forEach(function(single_genre){
+        arrayGenreSeparated.push({
+          titel: book.title,
+          taal: book.taal,
+          genre: single_genre,
+        })
+      })
+    })
+  }else{
+    d.data.values.forEach(function(book){
+      book.genre.forEach(function(single_genre){
+        arrayGenreSeparated.push({
+          titel: book.title,
+          taal: book.taal,
+          genre: single_genre,
+        })
+      })
+    })
+  }
+
+  let genre = d3.nest()
+                .key(function(d) { return d.genre})
+                .entries(arrayGenreSeparated)
+  let genreCount = genre.map(function(d){return d.key})
+  return genre
+}
 
 
-function handleClick(d){
+
+
+
+function handleClick(d,i){
+  itemClicked = i
+  console.log(d)
   const current = this
   let currentSegment = d3.arc()
                         .innerRadius(180)
@@ -408,23 +471,7 @@ function handleClick(d){
 
   const barChart = d3.select(".bar.chart").transition()
   barChart.duration(750).attr("transform","translate(50,700)")
-  let arrayGenreSeparated =[]
-  d.data.values.forEach(function(book){
-    book.genre.forEach(function(single_genre){
-      arrayGenreSeparated.push({
-        titel: book.title,
-        taal: book.taal,
-        genre: single_genre,
-      })
-    })
-  })
-
-  let genre = d3.nest()
-  .key(function(d) { return d.genre})
-  .entries(arrayGenreSeparated)
-  let genreCount = genre.map(function(d){return d.key})
-
-  updateBarchart(genre, "indexed")
+  updateBarchart(getGenres(d), "indexed")
 
 
   let legends = d3.selectAll(".legends").transition()
@@ -437,7 +484,7 @@ function handleClick(d){
 
   // Setting the genre Legends
   // Dit kan later in een function gestopt word voor simpelifcatie
-  makeLegend(genre, ".genre_legend", "genre_legend", "genre_legends", "indexed",colors(d.data.values.length), 35, 16, 25)
+  makeLegend(getGenres(d), ".genre_legend", "genre_legend", "genre_legends", "indexed",colors(d.data.values.length), 35, 16, 25)
   const genreLegend= svg.select(".genre_legend").attr("transform", "translate(50,40)")
   let genreLegends = genreLegend.selectAll(".genre_legends").attr("transform", function(d,i){return`translate(0,${(i+1)*30})`})
   genreLegends.selectAll("text")
@@ -450,7 +497,7 @@ function handleClick(d){
                         .padAngle(0.2)
                         .padRadius(10)
 
-  makeRoundedChart(genre, pieSegments, "pie chart", "pie sections", "indexed", colors(d.data.values.length),false, false)
+  makeRoundedChart(getGenres(d), pieSegments, "pie chart", "pie sections", "indexed", colors(d.data.values.length),false, false)
   svg.select(".pie.chart").attr("transform", "translate(750,502)")
   d3.select(this).on("click",resetToDefault)
 
@@ -480,6 +527,8 @@ function capatalize(string){
 
 // Deze function is zwaar onnodig als de charts gemaakt worden in een function iig het maken van de charts kan gedaan wordne in een function
 function resetToDefault(){
+  // console.log(getGenres(nestedData[itemClicked]))
+  itemClicked = nestedData
   let flag = height
   x.domain(nestedData.map(function(d){return d.key})).range([0, barWidth])
   y.domain([0, d3.max(nestedData, function(d){return d.values.length})])
@@ -499,7 +548,7 @@ function resetToDefault(){
           .transition()
           .duration(900)
           .call(yAxis)
-  console.log(height)
+
   updateBarchart(nestedData, "not indexed")
 
   // Bug fix voor verplaatsing van de y as en rect als de height 100 is
