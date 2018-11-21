@@ -140,10 +140,143 @@ function getGenres(d){
 Eerst word de hele bar chart verplaats en vervolgens word de data vervangen met behulp van de getGenre function Deze function zorgt ervoor dat alle voor alle genres dubbel of eenmalig in een array komen(dit moest ik doen, omdat er boeken zijn met meerdere genres). Vervolgens word er in de variabele genre een array aangemaakt met als key de genres.
 
 ### Hover Interacties
+In de hele web applicatie zijn er 2 hover functie's beiden met als doel om meer data te laten zijn als de gebruiker er overheen hovert donut hover en pie hover. Het enige verschil is dat bij de ene een scale word toegepast op de gehoverde item en bij de andere niet. Dit komt puur door gebrek aan tijd. :'(
+#### Donut hover en pie hover
+![hover1](/images/titleHoverANIMATIE.gif)
+![hover1](/images/genreHoverANIMATIE.gif)
+
+Code
+```js
+// Dit zijn allemaal losse functie's
+const scale  = 1;
+function handleMouseOver(d){
+  let currentSectionText = svg.append("g")
+      .attr("transform","translate(560,100)")
+      .attr("class", "currentSectionText")
+  currentSectionText.append("text")
+                      .text(function(){return `Taal: ${capatalize(d.data.key)}, Aantal Boeken: ${d.data.values.length}  `})
+                      .attr("fill",function(){return colors(d.data.values.length)})
+
+  d3.select(this)
+      .transition()
+      .duration(200)
+      .attr("transform", `scale(${scale*1.1})`)
+}
+
+function mouseMove(){
+ tooltip.style("top",
+(event.pageY-10)+"px").style("left",
+(event.pageX+10)+"px");
+}
+
+function showMoreInfo(d){
+ let color = colors(d.index)
+  tooltip
+      .style("opacity", "1")
+      .text("Genre: " + d.data.key)
+      // .attr("fill", function(d,i){ return colors(d.data.values.length)})
+      .style("color", color)
+      .append("text")
+      .text("Aantal Boeken: " + d.data.values.length)
+}
+
+
+function handleMouseOut(d, i){
+tooltip.style("opacity", "0");
+let current = this.className.baseVal
+if(this.className.baseVal === "donut sections"){
+
+svg.select(".currentSectionText")
+    .remove()
+
+d3.select(this)
+    .transition()
+    .duration(500)
+    .attr("transform", `scale(${scale})`)
+  }
+}
+
+```
+De donut chart hover maakt gebruik van de functie handleMouseOver. In de handleMouseOver functie word 2 dingen gedaan, namelijk een group aangemaakt met als tekst erin. In de tekst word het huidige data weergeven van het gehoverde item. Als tweede word het gehoverde item vergroot door een scale attribuut aan toe te voegen. Bij de pie hover word er een tooltip text toegevoegd(wat bijna precies hetzelfde is als de tekst hover van de donut hover). Bij de mouse out functie word er in de current variabele de classname opgeslagen en als de class name gelijk is aan donut sections dan word de ifstatement geactiveerd. Deze verwijderd de tekst wat bij de donut hover hoort en de scale.  
+
+
 
 ### Sorteren
+Data word gesorteerd... wat moet ik meer zeggen. Nah grapje. Data van de barchart word alleen hier gesorteerd. Ik wou dit ook doen voor de bar en de pie chart, maar wederom door gebrek aan tijd is het mij niet gelukt. De sort optie kan je bovenin vinden in de header. NOTE: Bij het sorteren van de genres veranderen de kleuren dit is een bug ik nog niet heb kunnen oplossen.
+![hover1](/images/sorteerANIMATIE.gif)
 
+Code
+```js
+// Globale variabele
+let itemClicked = nestedData;
+
+// Leeft in de click function
+itemClicked = i
+
+// Leeft in de resetToDefault function
+let itemClicked = nestedData;
+function indexedOrNot(){
+  if(itemClicked === nestedData){
+    return "not indexed"
+  }else{
+    return "indexed"
+  }
+}
+function currentDataset(){
+  if(itemClicked === nestedData){
+    return nestedData
+  }else{
+    return getGenres(nestedData[itemClicked])
+  }
+}
+sortBy.on("change", function(){
+  let value = sortBy.node().value
+  if(value === "HighFirst"){
+    let descendingData = currentDataset().sort(function(a,b){return d3.descending(a.values.length, b.values.length)})
+    updateBarchart(descendingData, indexedOrNot())
+
+  }else{
+    let descendingData = currentDataset().sort(function(a,b){return d3.ascending(a.values.length, b.values.length)})
+    updateBarchart(descendingData, indexedOrNot())
+  }
+})
+```
+In de globale scope van de code bevind zich de itemClicked variabele(dit is niet de beste benaming ever ofzo). De itemClicked geeft aan welke database de sort function moet gebruiken. De dataset kan een onderdeel zijn van een array, de eerste data in de array of de laatste, of het gehele dataset oftewel de nestedData(data). Je kan itemClicked zien als een indicator welke data de sortby moet gebruiken. En natuurlijk heb je de sortby function dat de data sorteerd en de indexedOrNot function bepaald op wat voor een manier de kleuren worden gerepresenteerd. Door middel van de length van de data of de index cijfer van de data.
 ### Verplaatsen van Charts
+Bovenin naast de sortby heb je een toggle voor het verplaatsen van de locatie van de charts. Door het aan te zetten kan je de charts verplaatsen naar je wensen.
+![hover1](/images/verplaatsenANIMATIE.gif)
+
+Code _Deze code komt van de lynda tutorial over d3 Bekijk Bronnenlijst_
+```js
+// Losse functie
+moveItems.on("change", function(){
+  let toggle = moveItems.node().value;
+  console.log(toggle)
+  if(toggle === "on"){
+    console.log("aan")
+    d3.select(".bar.chart").call(d3.drag().on("drag", dragged))
+    d3.select(".donut.chart").call(d3.drag().on("drag", dragged))
+    d3.select(".legend").call(d3.drag().on("drag", dragged))
+    d3.select(".genre_legend").call(d3.drag().on("drag", dragged))
+    d3.select(".pie.chart").call(d3.drag().on("drag", dragged))
+  }else{
+    console.log("uit")
+    d3.select(".bar.chart").on("drag", null)
+    d3.select(".donut.chart").on("drag", null)
+    d3.select(".legend").on("drag", null)
+  }
+
+  function dragged(){
+    d3.select(this).attr("transform", `translate(${d3.event.x},${d3.event.y})`)
+  }
+})
+```
+Hierboven kan je zien dat er bij een change event een functie gestart word waar er eerst gekeken word of de toggle on is
+als dat het geval is worden alle charts geselecteerd en vervolgens een drag event aan toegevoegd met een function dat de transform dynamische word veranderd bij draggen. In de else worden de drag events op null gezet zodat het uit word gezet, maar helaas werkt het niet dus dat is een bug dat ik nog moet gaan oplossen.
+
+### Kleuren veranderen van de Charts
+Titel zegt het al een optie om de kleuren te veranderen van de charts. Niet heel erg bijzonder, maar hoe ik het opgelost heb is wel vrij bijzonder! Of het op de juiste manier is gedaan IDK, denk het eigenlijk niet, maar het werkt!
+
 
 ###
 https://www.youtube.com/watch?v=P8KNr0pDqio&t=294s
