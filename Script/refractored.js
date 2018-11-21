@@ -462,10 +462,6 @@ function handleClick(d,i){
         .style("opacity", function(d){return (this === current) ? 1 : .3})
         // .attr("transform", `scale(${changeSize(current)})`)
         .attr("transform", function(d){return (this === current) ? "scale(1.3)" : "scale(1.2)"})
-  donut.selectAll("text")
-        .transition()
-        .duration(200)
-        .attr("opacity", 0)
 
   const barChart = d3.select(".bar.chart").transition()
   barChart.duration(750).attr("transform","translate(50,650)")
