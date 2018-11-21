@@ -24,13 +24,13 @@ Ga naar localhost:3000 in je favoriete browser
 
 ## Inhoud
 * [Onderzoeksvraag](#Onderzoeksvraag)
-* [Mijn Files](#Mijn Files)
+* [Mijn Files](#MijnFiles)
 * [Schetsen](#Schetsen)
 * [Eindresultaat](#Eindresultaat)
 * [Interactie's](#Interacties)
-* [Het proces](#Het proces)
-* [To do](#To do list)
-* [To do](#Credits)
+* [Het proces](#Proces)
+* [To do](#To-do-list)
+* [Credits](#Credits)
 * [Bronnenlijst](#Bronnenlijst)
 
 
@@ -45,7 +45,7 @@ Het leek mij wel interessant om te kijken per taal wat voor genres er beschikbaa
 - [x] Hoe krijg ik alleen de genres verwerkt in de pie chart
 - [x] Hoe krijg ik de extra info bij de een hover?
 
-## Mijn Files
+## MijnFiles
 Uitleg waar de mappen en files voor staan.
 
 :file_folder: **Script:** Hier worden alle javascript,json, en css bestanden opgeslagen (behalve de server.js en data.js files)
@@ -363,7 +363,7 @@ changeColor.on("change", function(){
 ```
 Helemaal bovenin worden de kleuren sets van D3 ingeladen. Hierdoor kan ik gebruik maken van een standaard set kleuren dat d3 heeft ingebouwd. In de on change function kan je zien dat alle charts worden geselecteerd en vervolgens worden er een andere color schema aan toegepast. NOTE: Wat niet in de code staat is hoe ik de kleuren bepaal. In de code kom je regelmatig indexed of not indexed tegen. Dit heb ik gedaan om te bepalen of de kleuren worden gemaakt aan de hand van de lengte van een data of juist de index cijfer van een data. In de genres zijn er namelijk een heleboel met hetzelfde lengte waardes, waardoor het onderscheiden van de genres lastig gaat worden.
 
-## Het proces
+## Proces
 In het begin had ik weinig hoop, omdat ik tot nu toe niks heb gehaald. Maar dankzij wat hulp van wouter en doorzettingsvermogen kwam ik snel weer op gang. Ik had besloten om zo snel mogelijk te beginnen met coderen met d3, omdat ik nogal wat achterliep qua kennis over d3. De dataset had ik al op de eerste dag(dankzij wouter), zodat ik meteen kon beginnen met leren van d3. De gefilterde dataset kan je vinden in de data.js file. D3 leren was in het begin heel lastig en moeilijk te begrijpen, maar dat komt vooral omdat het allemaal nog vrij nieuw was. Maar toen ik het eenmaal snapte ging alles heel soepel. Tijdens mijn journey kwamen er wel een heleboel problemen steeds tevoorschijn. Het lastigste vond ik nog wel hoe de exit() werkte en hoe ik de data van een chart kan veranderen. Ik was hiermee minimaal 3 dagen mee bezig geweest. Heel veel verschillende bronnen en voorbeelden gebruikt, maar ze waren allemaal niet van toepassing voor mijn specieke chart. Toen stuurde dennis mij een hele simepele voorbeeld van een exit voorbeeld en dat werkte! Naast dit waren er nog velen meer problemen waar ik tegenaan ben gelopen. Eén daarvan is dat door de hover optie en de transitions er heel veel bugs gingen ontstaan, omdat sommige transitions nog bezig waren en de gebruiker kon toen al een event starten waardoor er verschillende veranderingen en transities worden gestart. Dit heb ik opgelost door een Timeout function toe te voegen, zodat de gebruiker moet wachten totdat ze de events kunnen starten.
 ```js
 setTimeout(function(){
@@ -378,7 +378,7 @@ setTimeout(function(){
 * Dit sluit eigenlijk wel aan op mijn eerste punt en dat is functions schrijven die maar 1 ding doen. Dit voorkomt ook dat ik mijn eigen bugs moet gaan fixen elke keer XD
 * Goeie zoektermen gebruiken voor mijn problemen, want voor elke probleem is er wel een oplossing te vinden op stackoverflow. Maar je moet wel de juiste termen gebruiken.
 
-## To do list
+## To-do-list
 - [ ] De charts responsive maken. De charts zien er op elke scherm anders uit
 - [ ] Sorteer bug fixen. Bij het sorteren van de genres veranderen de kleuren(Dit komt, omdat de kleuren worden bepaald aan de hand van de index cijfer)
 - [ ] Reset knopje fixen
