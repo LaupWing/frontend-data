@@ -1,5 +1,5 @@
 # Frontend Data
-_Dit is de layout van Jim van de ven met mijn content. Ik ben namelijk heel slecht in het schrijven van teksten :P(verbeterpuntje)_
+_Dit is de layout van Jim van de Ven met mijn content erin. Ik ben namelijk heel slecht in het schrijven van teksten :P(verbeterpuntje)_
 ## Introductie
 In dit project word er van de oba api een interactieve data visualisatie gemaakt. De interactieve data is gebaseerd op mijn onderzoeksvraag. Om toegang te krijgen tot de oba datbase maak ik gebruik van de oba api van Rijk van Zanten (https://github.com/rijkvanzanten/node-oba-api). En met behulp van de package van wouter(https://github.com/maanlamp/node-oba-api-wrapper) kan ik simpel schone data ophalen en de data dat ik echt nodig heb.
 
@@ -36,6 +36,7 @@ Als de gebruiker op de een taal klikt in de donut chart worden er meerdere anima
 #### Pie chart met genres van een bepaalde taal komt tevoorschijn en donut chart vervormt.
 Na het t klikken verschijnt het kleur van een bepaalde land voor een momentje in de pie chart en verloopt daarna naar de kleuren van de genres. Dit werkt als een kleine indicator van waar de gebruik op geklikt heeft en het ziet er super gaaf uit :D
 ![chart](/images/donut_piechartANIMATIE.gif)
+
 Code:
 ```js
 // Dit bevind zich allemaal in de klik function
@@ -71,6 +72,8 @@ De variable newSegment word gebruikt om een de gat in de donut chart nog groter 
 #### Legenda verplaats en genre legenda verschijnt
 De titel zegt het eigenlijk al. Bij het klikken van verplaatst de legenda zich boven de donut chart en komt er een legenda van genres tevoorschijn. Zoals je kan zien weergeeft het legenda voor ene momentje ook het kleur van een de geklikte taal.
 ![legenda](/images/legendaANIMATIE.gif)
+
+Code
 ```js
 // Dit bevind zich allemaal in de klik function
 let legends = d3.selectAll(".legends").transition()
@@ -95,6 +98,8 @@ Bij de genre legenda word precies hetzelfde gedaan, maar dan word eerst de genre
 #### Bar chart verplaats zich en veranderd data
 Als laatst is bij de klik event veranderd de bar chart van positie en de data. De data wat gepresenteerd werd waren de aantal boeken per taal. Na de klik event worden de aantal boeken per genre gepresenteerd.
 ![barchart](/images/barchartANIMATIE.gif)
+
+Code
 ```js
 // Dit bevind zich allemaal in de klik function
 const barChart = d3.select(".bar.chart").transition()
@@ -132,7 +137,8 @@ function getGenres(d){
 }
 
 ```
-Eerst word de hele bar chart verplaats en vervolgens word de data vervangen met behulp van de getGenre function Deze function zorgt ervoor dat alle voor alle genres dubbel of eenmalig in een array komen(dit moest ik doen, omdat er boeken zijn met meerdere genres). Vervolgens word er in de veriabele genre een array aangemaakt met als key de genres. 
+Eerst word de hele bar chart verplaats en vervolgens word de data vervangen met behulp van de getGenre function Deze function zorgt ervoor dat alle voor alle genres dubbel of eenmalig in een array komen(dit moest ik doen, omdat er boeken zijn met meerdere genres). Vervolgens word er in de variabele genre een array aangemaakt met als key de genres.
+
 ### Hover Interacties
 
 ### Sorteren
