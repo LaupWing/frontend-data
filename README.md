@@ -1,11 +1,30 @@
 # Frontend Data
 _Dit is de layout van Jim van de Ven met mijn content erin. Ik ben namelijk heel slecht in het schrijven van teksten :P(verbeterpuntje)_
+_Waarchuwing: Wederom gigantische spaghetti code im sorry_
 ## Introductie
 In dit project word er van de oba api een interactieve data visualisatie gemaakt. De interactieve data is gebaseerd op mijn onderzoeksvraag. Om toegang te krijgen tot de oba datbase maak ik gebruik van de oba api van Rijk van Zanten (https://github.com/rijkvanzanten/node-oba-api). En met behulp van de package van wouter(https://github.com/maanlamp/node-oba-api-wrapper) kan ik simpel schone data ophalen en de data dat ik echt nodig heb.
 
+## Hoe gebruik ik dit?
+```
+Clone of download
+
+Open in je favoriete code editor
+
+Open cmd
+
+Navigeer naar dit mapje
+
+Npm install om alle nodige packages te installeren
+
+Npm start om de localhost te starten
+
+Ga naar localhost:3000 in je favoriete browser
+
+```
+
 ## Inhoud
 * [Onderzoeksvraag](#Onderzoeksvraag)
-* [Mijn files](#Mijn Files)
+* [Mijn Files](#Mijn Files)
 * [Schetsen](#Schetsen)
 * [Eindresultaat](#Eindresultaat)
 * [Interactie's](#Interacties)
@@ -27,17 +46,24 @@ Het leek mij wel interessant om te kijken per taal wat voor genres er beschikbaa
 
 ## Mijn Files
 Uitleg waar de mappen en files voor staan.
+
 :file_folder: **Script:** Hier worden alle javascript,json, en css bestanden opgeslagen (behalve de server.js en data.js files)
+
 :file_folder: **View:** Hier worden alle statische html bestanden in opgeslagen
+
 :page_facing_up:**data.js:** Hier word de data opgehaald van de oba api en gefilterd vervolgens opgeslagen in log.json
+
 :page_facing_up:**server.js:** Javascript om de website op een localhost te laten draaien, zodat ik fs kan gebruiken
-:page_facing_up:**log.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand
+
+:page_facing_up:**log.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand(50 boeken op zoekterm h)
+:page_facing_up:**log.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand(200 boeken op zoekterm e)
 ## Schetsen
 Mijn idee is om een donut chart te maken met daarin de verschillende talen gepresenteerd. Als de gebruiker op de één van de talen klikt verschijnt er een pie chart midden in de donut chart met daarin de genres verwerkt van een bepaalde taal.
 
 ## Eindresultaat
 Hieronder zie je een afbeelding van hoe het uiteindelijke resultaat eruitziet. Het bijbehorende code kan ik met trots zeggen dat ik veel zelf heb geschreven, ondanks het 1 grote spaghetti code is. Het werkt, zoals het hoort! Er zijn wat bugs erin maar die komen gelukkig niet heel vaak voor of in de juiste omstandigheden.
 ![Eindresultaat](/images/Eindresultaat.png)
+Uit de charts kan je zien dat er voornamelijk veel arabische boeken zijn waarvan de genre bekent van is. Van de arabische boeken zijn er veel boeken met de genre politiek en psychologie. Terwijl in de boeken uit andere talen de genres vrij verdeeld zijn. Maar dit zijn de resultaten van 50 boeken op de zoekterm h (want je moet blijkbaar wel een zoekterm meegeven). Bij de resultaat van 50 boeken op de zoekterm e komen er opeens juist wel een heleboel boeken die in het Nederlands zijn geschreven!. En blijkbaar zijn er heel veel Nederlandse boeken met het genre dieren.
 
 ## Interacties
 In mijn web applicatie heb ik een sorteer interactie, klik interactie, chart verplaatsen interactie kleuren veranderen, en een hover interactie. Deze kun je allemaal in dit hoofdstuk vinden met een uitleg. De bijbehorende codes kun je eronder ook vinden.
@@ -336,11 +362,36 @@ changeColor.on("change", function(){
 Helemaal bovenin worden de kleuren sets van D3 ingeladen. Hierdoor kan ik gebruik maken van een standaard set kleuren dat d3 heeft ingebouwd. In de on change function kan je zien dat alle charts worden geselecteerd en vervolgens worden er een andere color schema aan toegepast. NOTE: Wat niet in de code staat is hoe ik de kleuren bepaal. In de code kom je regelmatig indexed of not indexed tegen. Dit heb ik gedaan om te bepalen of de kleuren worden gemaakt aan de hand van de lengte van een data of juist de index cijfer van een data. In de genres zijn er namelijk een heleboel met hetzelfde lengte waardes, waardoor het onderscheiden van de genres lastig gaat worden.
 
 ## Het proces
-In het begin had ik weinig hoop, omdat ik tot nu toe niks heb gehaald. Maar dankzij wat hulp van wouter en doorzettingsvermogen kwam ik snel weer op gang. Ik had besloten om zo snel mogelijk te beginnen met coderen met d3, omdat ik nogal wat achterliep qua kennis over d3. De dataset had ik al op de eerste dag(dankzij wouter), zodat ik meteen kon beginnen met leren van d3. De gefilterde dataset kan je vinden in de data.js file.
+In het begin had ik weinig hoop, omdat ik tot nu toe niks heb gehaald. Maar dankzij wat hulp van wouter en doorzettingsvermogen kwam ik snel weer op gang. Ik had besloten om zo snel mogelijk te beginnen met coderen met d3, omdat ik nogal wat achterliep qua kennis over d3. De dataset had ik al op de eerste dag(dankzij wouter), zodat ik meteen kon beginnen met leren van d3. De gefilterde dataset kan je vinden in de data.js file. D3 leren was in het begin heel lastig en moeilijk te begrijpen, maar dat komt vooral omdat het allemaal nog vrij nieuw was. Maar toen ik het eenmaal snapte ging alles heel soepel. Tijdens mijn journey kwamen er wel een heleboel problemen steeds tevoorschijn. Het lastigste vond ik nog wel hoe de exit() werkte en hoe ik de data van een chart kan veranderen. Ik was hiermee minimaal 3 dagen mee bezig geweest. Heel veel verschillende bronnen en voorbeelden gebruikt, maar ze waren allemaal niet van toepassing voor mijn specieke chart. Toen stuurde dennis mij een hele simepele voorbeeld van een exit voorbeeld en dat werkte! Naast dit waren er nog velen meer problemen waar ik tegenaan ben gelopen. Eén daarvan is dat door de hover optie en de transitions er heel veel bugs gingen ontstaan, omdat sommige transitions nog bezig waren en de gebruiker kon toen al een event starten waardoor er verschillende veranderingen en transities worden gestart. Dit heb ik opgelost door een Timeout function toe te voegen, zodat de gebruiker moet wachten totdat ze de events kunnen starten.
+```js
+setTimeout(function(){
+  donutSections.on("mouseover", handleMouseOver)
+  .on("mouseout", handleMouseOut)
+  .on("click", handleClick)
+}, 1000);
+```
+**Wat heb ik geleerd? Naast wat d3 code synthaxes**
 
-###
+* Niet meteen coderen. Eerst bedenken wat voor functions je nodig heb en hoe je dingen wilt gaan aanpakken. Dit had ik niet gedaan, waardoor ik in het begin 1 grote blubber code met nauwelijks functie's erin
+* Dit sluit eigenlijk wel aan op mijn eerste punt en dat is functions schrijven die maar 1 ding doen. Dit voorkomt ook dat ik mijn eigen bugs moet gaan fixen elke keer XD
+* Goeie zoektermen gebruiken voor mijn problemen, want voor elke probleem is er wel een oplossing te vinden op stackoverflow. Maar je moet wel de juiste termen gebruiken.
+
+## To do list
+- [ ] De charts responsive maken. De charts zien er op elke scherm anders uit
+- [ ] Sorteer bug fixen. Bij het sorteren van de genres veranderen de kleuren(Dit komt, omdat de kleuren worden bepaald aan de hand van de index cijfer)
+- [ ] Reset knopje fixen
+- [ ] Code refactoren, het is nog te spaghetti code, maar ik ben bang om het nu te refractoren anders werken dingen niet meer.
+- [ ] Pie chart clickable maken, zodat de gebruiker de titels kunnen zien in de genres.
+
+## Credits
+Wederom gaan er veel credits naar wouter hij gaf me een hele grote jump in het begin.
+
+## Bronnenlijst
+* **_Pie chart video_**
 https://www.youtube.com/watch?v=P8KNr0pDqio&t=294s
+* **_Hoe kan ik data in een array in een object gebruiken als key?_**
 https://stackoverflow.com/questions/47581324/can-an-array-be-used-as-a-d3-nest-key
-testing
+* **_Update patronen van d3 filmpje_**
 https://www.youtube.com/watch?v=IyIAR65G-GQ
-Probleem! transitions werken elkaar tegen! oplossing! sesttimeout
+* **_Lynda d3 tutorial_**
+https://www.lynda.com/D3-js-tutorials/Creating-linear-axis/504428/549414-4.html?autoplay=true

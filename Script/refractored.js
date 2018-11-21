@@ -1,4 +1,4 @@
-d3.json('log.json').then(function(data){
+d3.json('log2.json').then(function(data){
   // #1: Globale variables worden hier allemaal aangemaakt
   //-------------------------------------------------------------------------------------
   // Globale margins
