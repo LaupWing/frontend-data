@@ -79,12 +79,12 @@ d3.json('log.json').then(function(data){
              .transition()
              .duration(1000)
              .delay(function(d,i){return i *200})
-             .attr("fill", function(d,i){return colors2(d.values.length)})
+             .attr("fill", function(d,i){return colors2(d.data.values.length)})
       genreLegends.selectAll("rect")
              .transition()
              .duration(1000)
              .delay(function(d,i){return i *200})
-             .attr("fill", function(d,i){return colors2(i)})
+             .attr("fill", function(d,i){return colors2(d.values.length)})
       break;
     }
   });
@@ -129,11 +129,7 @@ sortBy.on("change", function(){
   let value = sortBy.node().value
   if(value === "HighFirst"){
     let descendingData = currentDataset().sort(function(a,b){return d3.descending(a.values.length, b.values.length)})
-    updateBarchart(descendingData, indexedOrNot()).transition()
-					.delay(function(d, i) {
-						return i * 50;  // gives it a smoother effect
-					})
-					.duration(1000)
+    updateBarchart(descendingData, indexedOrNot())
 
   }else{
     let descendingData = currentDataset().sort(function(a,b){return d3.ascending(a.values.length, b.values.length)})
