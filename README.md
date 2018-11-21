@@ -56,7 +56,8 @@ Uitleg waar de mappen en files voor staan.
 :page_facing_up:**server.js:** Javascript om de website op een localhost te laten draaien, zodat ik fs kan gebruiken
 
 :page_facing_up:**log.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand(50 boeken op zoekterm h)
-:page_facing_up:**log.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand(200 boeken op zoekterm e)
+
+:page_facing_up:**log2.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand(200 boeken op zoekterm e)
 ## Schetsen
 Mijn idee is om een donut chart te maken met daarin de verschillende talen gepresenteerd. Als de gebruiker op de één van de talen klikt verschijnt er een pie chart midden in de donut chart met daarin de genres verwerkt van een bepaalde taal.
 
