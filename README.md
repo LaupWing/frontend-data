@@ -28,9 +28,10 @@ Ga naar localhost:3000 in je favoriete browser
 * [Schetsen](#Schetsen)
 * [Eindresultaat](#Eindresultaat)
 * [Interactie's](#Interacties)
-* [Process](#process)
-* [To do](#still-to-do)
-* [Bronnenlijst](#bronnen)
+* [Het proces](#Het proces)
+* [To do](#To do list)
+* [To do](#Credits)
+* [Bronnenlijst](#Bronnenlijst)
 
 
 ## Onderzoeksvraag
