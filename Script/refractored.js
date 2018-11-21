@@ -164,7 +164,14 @@ sortBy.on("change", function(){
             .attr("class","axis x")
             .attr("transform",`translate(0,${height})`)
             .call(xAxis)
-
+  svg.append("text")
+     .attr("class", "yAs label")
+     .text("Aantal Boeken")
+     .attr("transform", "translate(20,450), rotate(-90)")
+  svg.append("text")
+     .attr("class", "xAs label")
+     .text("Verschillend talen")
+     .attr("transform", "translate(180,540)")
   // De waardes voor ronde charts worden hier gemaakt
   let segments = d3.arc()
                    .innerRadius(180)
@@ -460,9 +467,17 @@ function handleClick(d,i){
         .attr("opacity", 0)
 
   const barChart = d3.select(".bar.chart").transition()
-  barChart.duration(750).attr("transform","translate(50,700)")
+  barChart.duration(750).attr("transform","translate(50,650)")
   updateBarchart(getGenres(d), "indexed")
-
+  svg.select(".yAs.label")
+     .transition()
+     .duration(750)
+     .attr("transform", "translate(15,850), rotate(-90)")
+  svg.select(".xAs.label")
+     .transition()
+     .duration(750)
+     .text("Verschillende genres")
+     .attr("transform", "translate(250,890)")
 
   let legends = d3.selectAll(".legends").transition()
   legends.duration(1000)
@@ -545,6 +560,15 @@ function resetToDefault(){
           .transition()
           .duration(900)
           .call(yAxis)
+  svg.select(".yAs.label")
+     .transition()
+     .duration(750)
+     .attr("transform", "translate(20,450), rotate(-90)")
+  svg.select(".xAs.label")
+     .transition()
+     .duration(750)
+     .text("Verschillende talen")
+     .attr("transform", "translate(180,540)")
 
   updateBarchart(nestedData, "not indexed")
 
