@@ -6,7 +6,7 @@ d3.json('log.json').then(function(data){
   // Svg en barchart groups worden aangemaakt met attributes
   const svg = d3.select("body").append("svg").attr("width", "100%").attr("height","100%")
   const barChart = svg.append("g").attr("class","bar chart").attr("transform",`translate(${margin.left},300)`)
-
+  const tooltip = d3.select("body").append("div").attr("class", "tooltip")
   // D3 kleuren schema's worden hier ingeladen voor gebruik
   const colors = d3.scaleOrdinal(d3.schemePastel1);
   const colors2 = d3.scaleOrdinal(d3.schemePastel2);
@@ -90,7 +90,6 @@ d3.json('log.json').then(function(data){
   });
 
   reset.on("click", function(){
-    console.log("testing")
     d3.select(".bar.chart").attr("transform", "translate(50,300)")
     d3.select(".donut.chart").attr("transform", "translate(750,400)")
     d3.select(".legend").attr("transform", "translate(50,0)")
@@ -134,10 +133,9 @@ sortBy.on("change", function(){
   }else{
     let descendingData = currentDataset().sort(function(a,b){return d3.ascending(a.values.length, b.values.length)})
     updateBarchart(descendingData, indexedOrNot())
-
   }
 })
-// // Data sorteren
+  // Data sorteren
   // #3: Aanmaken van de schalen van de x en y as en waardes voor de pie/donut chart
   //-------------------------------------------------------------------------------------
 
@@ -207,12 +205,8 @@ sortBy.on("change", function(){
               .duration(2000)
               .delay(function(d,i){return i*100})
               .attr("fill", setColorIndexPie(colorStyle))
-    if(add === true){
-      addInfo(donutData)
-    }else{
-      // console.log("word niet toegevoegd")
-    }
     const donutSections =  d3.selectAll(".donut.sections")
+
     if(events){
       setTimeout(function(){
         donutSections.on("mouseover", handleMouseOver)
@@ -226,21 +220,10 @@ sortBy.on("change", function(){
 
   }
 
+
   function dragged(){
     d3.select(this).attr("transform", `translate(${d3.event.x},${d3.event.y})`)
   }
-
-  function addInfo(data){
-    let text = svg.select("g").selectAll("text").data(data)
-    text.enter().append("text").each(function(d){
-      let center = segments.centroid(d);
-      d3.select(this)
-        .attr("x", center[0])
-        .attr("y", center[1])
-        .text(d.data.values.length)
-    })
-  }
-
 
   function startingColorPie(startingColor){
     if(typeof startingColor === "undefined"){
@@ -361,14 +344,7 @@ sortBy.on("change", function(){
   //-------------------------------------------------------------------------------------
 
   const scale  = 1;
-  function handleMouseOver(d, i){
-    // CODEVOORBEELD van stackoverflow voorbeeld: Linkje staat in de README
-    // Link stackoverflow: https://stackoverflow.com/questions/47581324/can-an-array-be-used-as-a-d3-nest-key
-
-    // let currentSectionText = svg.select(".currentSectionText").data(d)
-    // currentSectionText.enter()
-    //                     .append("g")
-    //                     .attr("class","currentSectionText")
+  function handleMouseOver(d){
     let currentSectionText = svg.append("g")
         .attr("transform","translate(560,100)")
         .attr("class", "currentSectionText")
@@ -383,9 +359,28 @@ sortBy.on("change", function(){
         .attr("transform", `scale(${scale*1.1})`)
  }
 
+ function mouseMove(){
+   console.log("mousemove")
+   tooltip.style("top",
+  (event.pageY-10)+"px").style("left",
+  (event.pageX+10)+"px");
+ }
+
+ function showMoreInfo(d){
+   console.log(d)
+   let color = colors(d.index)
+    tooltip
+        .style("opacity", "1")
+        .text("Genre: " + d.data.key)
+        // .attr("fill", function(d,i){ return colors(d.data.values.length)})
+        .style("color", color)
+        .append("text")
+        .text("Aantal Boeken: " + d.data.values.length)
+ }
 
 
 function handleMouseOut(d, i){
+  tooltip.style("opacity", "0");
   svg.select(".currentSectionText")
       .remove()
 
@@ -421,7 +416,6 @@ function getGenres(d){
       })
     })
   }
-
   let genre = d3.nest()
                 .key(function(d) { return d.genre})
                 .entries(arrayGenreSeparated)
@@ -494,7 +488,14 @@ function handleClick(d,i){
                         .padRadius(10)
 
   makeRoundedChart(getGenres(d), pieSegments, "pie chart", "pie sections", "indexed", colors(d.data.values.length),false, false)
+  const pieSections = d3.selectAll(".pie.sections")
   svg.select(".pie.chart").attr("transform", "translate(750,502)")
+  // setTimeout(function(){
+
+    pieSections.on("mouseover", showMoreInfo)
+    .on("mouseout", handleMouseOut)
+    .on("mousemove", mouseMove)
+  // },4000)
   d3.select(this).on("click",resetToDefault)
 
 }
