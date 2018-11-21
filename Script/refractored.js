@@ -355,7 +355,6 @@ sortBy.on("change", function(){
     let currentSectionText = svg.append("g")
         .attr("transform","translate(560,100)")
         .attr("class", "currentSectionText")
-
     currentSectionText.append("text")
                         .text(function(){return `Taal: ${capatalize(d.data.key)}, Aantal Boeken: ${d.data.values.length}  `})
                         .attr("fill",function(){return colors(d.data.values.length)})
@@ -367,14 +366,12 @@ sortBy.on("change", function(){
  }
 
  function mouseMove(){
-   console.log("mousemove")
    tooltip.style("top",
   (event.pageY-10)+"px").style("left",
   (event.pageX+10)+"px");
  }
 
  function showMoreInfo(d){
-   console.log(d)
    let color = colors(d.index)
     tooltip
         .style("opacity", "1")
@@ -388,6 +385,9 @@ sortBy.on("change", function(){
 
 function handleMouseOut(d, i){
   tooltip.style("opacity", "0");
+  let current = this.className.baseVal
+  if(this.className.baseVal === "donut sections"){
+
   svg.select(".currentSectionText")
       .remove()
 
@@ -395,6 +395,7 @@ function handleMouseOut(d, i){
       .transition()
       .duration(500)
       .attr("transform", `scale(${scale})`)
+    }
 }
 
 // Genres worden uit een specifieke selectie gehaald. Er is .data variant, omdat
