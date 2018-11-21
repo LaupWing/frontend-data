@@ -439,12 +439,6 @@ function handleClick(d,i){
   itemClicked = i
   console.log(d)
   const current = this
-  let currentSegment = d3.arc()
-                        .innerRadius(180)
-                        .outerRadius(250)
-                        .padAngle(0.2)
-                        .padRadius(10)
-
   let newSegment = d3.arc()
                         .innerRadius(200)
                         .outerRadius(250)

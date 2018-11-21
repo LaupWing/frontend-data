@@ -5,10 +5,10 @@ In dit project word er van de oba api een interactieve data visualisatie gemaakt
 
 ## Inhoud
 * [Onderzoeksvraag](#Onderzoeksvraag)
+* [Mijn files](#Mijn Files)
 * [Schetsen](#Schetsen)
+* [Eindresultaat](#Eindresultaat)
 * [Interactie's](#Interacties)
-* [Codes ](#early-drawings-of-the-visualisation)
-* [Eindresultaat](#exploring-the-api)
 * [Process](#process)
 * [To do](#still-to-do)
 * [Bronnenlijst](#bronnen)
@@ -25,8 +25,19 @@ Het leek mij wel interessant om te kijken per taal wat voor genres er beschikbaa
 - [x] Hoe krijg ik alleen de genres verwerkt in de pie chart
 - [x] Hoe krijg ik de extra info bij de een hover?
 
+## Mijn Files
+Uitleg waar de mappen en files voor staan.
+:file_folder: **Script:** Hier worden alle javascript,json, en css bestanden opgeslagen (behalve de server.js en data.js files)
+:file_folder: **View:** Hier worden alle statische html bestanden in opgeslagen
+:page_facing_up:**data.js:** Hier word de data opgehaald van de oba api en gefilterd vervolgens opgeslagen in log.json
+:page_facing_up:**server.js:** Javascript om de website op een localhost te laten draaien, zodat ik fs kan gebruiken
+:page_facing_up:**log.json:** Hier worden de resultaen in opgeslagen uit de data.js bestand
 ## Schetsen
 Mijn idee is om een donut chart te maken met daarin de verschillende talen gepresenteerd. Als de gebruiker op de één van de talen klikt verschijnt er een pie chart midden in de donut chart met daarin de genres verwerkt van een bepaalde taal.
+
+## Eindresultaat
+Hieronder zie je een afbeelding van hoe het uiteindelijke resultaat eruitziet. Het bijbehorende code kan ik met trots zeggen dat ik veel zelf heb geschreven, ondanks het 1 grote spaghetti code is. Het werkt, zoals het hoort! Er zijn wat bugs erin maar die komen gelukkig niet heel vaak voor of in de juiste omstandigheden.
+![Eindresultaat](/images/Eindresultaat.png)
 
 ## Interacties
 In mijn web applicatie heb ik een sorteer interactie, klik interactie, chart verplaatsen interactie kleuren veranderen, en een hover interactie. Deze kun je allemaal in dit hoofdstuk vinden met een uitleg. De bijbehorende codes kun je eronder ook vinden.
@@ -276,7 +287,56 @@ als dat het geval is worden alle charts geselecteerd en vervolgens een drag even
 
 ### Kleuren veranderen van de Charts
 Titel zegt het al een optie om de kleuren te veranderen van de charts. Niet heel erg bijzonder, maar hoe ik het opgelost heb is wel vrij bijzonder! Of het op de juiste manier is gedaan IDK, denk het eigenlijk niet, maar het werkt!
+![hover1](/images/kleurenANIMATIE.gif)
+```js
+// Globale variabeles
+const colors = d3.scaleOrdinal(d3.schemePastel1);
+const colors2 = d3.scaleOrdinal(d3.schemePastel2);
 
+// Losse functie
+changeColor.on("change", function(){
+  let color = changeColor.node().value;
+  let legends = d3.selectAll(".legends");
+  let genreLegends = d3.selectAll(".genre_legends")
+  switch(color){
+    case "Kleuren1":
+    console.log("kleuren1 okay")
+    break;
+    case "Kleuren2":
+    svg.selectAll(".donut.sections")
+       .transition()
+       .duration(1000)
+       .delay(function(d,i){return i *200})
+       .attr("fill", function(d,i){return colors2(d.data.values.length)})
+    svg.selectAll(".chartRect")
+       .transition()
+       .duration(1000)
+       .delay(function(d,i){return i *200})
+       .attr("fill", function(d,i){return colors2(d.values.length)})
+    legends.selectAll("rect")
+           .transition()
+           .duration(1000)
+           .delay(function(d,i){return i *200})
+           .attr("fill", function(d,i){return colors2(d.values.length)})
+    svg.selectAll(".pie.sections")
+           .transition()
+           .duration(1000)
+           .delay(function(d,i){return i *200})
+           .attr("fill", function(d,i){return colors2(d.data.values.length)})
+    genreLegends.selectAll("rect")
+           .transition()
+           .duration(1000)
+           .delay(function(d,i){return i *200})
+           .attr("fill", function(d,i){return colors2(d.values.length)})
+    break;
+  }
+});
+
+```
+Helemaal bovenin worden de kleuren sets van D3 ingeladen. Hierdoor kan ik gebruik maken van een standaard set kleuren dat d3 heeft ingebouwd. In de on change function kan je zien dat alle charts worden geselecteerd en vervolgens worden er een andere color schema aan toegepast. NOTE: Wat niet in de code staat is hoe ik de kleuren bepaal. In de code kom je regelmatig indexed of not indexed tegen. Dit heb ik gedaan om te bepalen of de kleuren worden gemaakt aan de hand van de lengte van een data of juist de index cijfer van een data. In de genres zijn er namelijk een heleboel met hetzelfde lengte waardes, waardoor het onderscheiden van de genres lastig gaat worden.
+
+## Het proces
+In het begin had ik weinig hoop, omdat ik tot nu toe niks heb gehaald. Maar dankzij wat hulp van wouter en doorzettingsvermogen kwam ik snel weer op gang. Ik had besloten om zo snel mogelijk te beginnen met coderen met d3, omdat ik nogal wat achterliep qua kennis over d3. De dataset had ik al op de eerste dag(dankzij wouter), zodat ik meteen kon beginnen met leren van d3. De gefilterde dataset kan je vinden in de data.js file.
 
 ###
 https://www.youtube.com/watch?v=P8KNr0pDqio&t=294s
