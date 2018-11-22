@@ -375,7 +375,7 @@ sortBy.on("change", function(){
  }
 
  function showMoreInfo(d){
-   let color = colors(d.index)
+   let color = colors(d.data.key)
     tooltip
         .style("opacity", "1")
         .text("Genre: " + d.data.key)
