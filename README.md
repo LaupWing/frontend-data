@@ -1,6 +1,9 @@
 # Frontend Data
 _Dit is de layout van Jim van de Ven met mijn content erin. Ik ben namelijk heel slecht in het schrijven van teksten :P(verbeterpuntje)_
-_Waarchuwing: Wederom gigantische spaghetti code im sorry_
+_Waarchuwing: Wederom gigantische spaghetti code im sorry. Ik heb veel zelf proberen te maken dus het ziet er vandaar helemaal niet uit, maar ik heb wel ontzettend veel geleerd!_
+
+[Klik op op mij voor demo van de chart!](https://boring-morse-48aa27.netlify.com/)
+
 ## Introductie
 In dit project word er van de oba api een interactieve data visualisatie gemaakt. De interactieve data is gebaseerd op mijn onderzoeksvraag. Om toegang te krijgen tot de oba datbase maak ik gebruik van de oba api van Rijk van Zanten (https://github.com/rijkvanzanten/node-oba-api). En met behulp van de package van wouter(https://github.com/maanlamp/node-oba-api-wrapper) kan ik simpel schone data ophalen en de data dat ik echt nodig heb.
 
@@ -377,6 +380,7 @@ setTimeout(function(){
 * Niet meteen coderen. Eerst bedenken wat voor functions je nodig heb en hoe je dingen wilt gaan aanpakken. Dit had ik niet gedaan, waardoor ik in het begin 1 grote blubber code met nauwelijks functie's erin
 * Dit sluit eigenlijk wel aan op mijn eerste punt en dat is functions schrijven die maar 1 ding doen. Dit voorkomt ook dat ik mijn eigen bugs moet gaan fixen elke keer XD
 * Goeie zoektermen gebruiken voor mijn problemen, want voor elke probleem is er wel een oplossing te vinden op stackoverflow. Maar je moet wel de juiste termen gebruiken.
+* Op het laatste moment kwam ik achter dat d3 ook namen kan gebruiken om een bepaalde kleur te geven. Ik dacht dat je strict getallen moest gebruiken :( Dus de functies van kleuren die ik heb gemaakt waren onnodig!!!
 
 ## To-do-list
 - [ ] De charts responsive maken. De charts zien er op elke scherm anders uit

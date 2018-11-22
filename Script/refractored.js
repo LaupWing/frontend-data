@@ -1,4 +1,4 @@
-d3.json('log2.json').then(function(data){
+d3.json('log.json').then(function(data){
   // #1: Globale variables worden hier allemaal aangemaakt
   //-------------------------------------------------------------------------------------
   // Globale margins
@@ -242,7 +242,7 @@ sortBy.on("change", function(){
 
   function setColorIndexPie(colorStyle){
     if(colorStyle === "indexed"){
-      return function(d,i){return colors(i)}
+      return function(d,i){return colors(d.data.key)}
     }else{
       return function(d,i){return colors(d.data.values.length)}
     }
@@ -250,7 +250,7 @@ sortBy.on("change", function(){
 
   function setColorIndex(colorStyle){
     if(colorStyle === "indexed"){
-      return function(d,i){return colors(i)}
+      return function(d,i){return colors(d.key)}
     }else{
       return function(d,i){return colors(d.values.length)}
     }
@@ -259,7 +259,7 @@ sortBy.on("change", function(){
 
   function updateBarchart(data, colorStyle){
     let currentData = data;
-
+    console.log(data)
     adjustingHeight(d3.max(data, function(d,i){return d.values.length}))
     // The chart generators are declared here
     let talenArray = data.map(function(d,i){return d.key})
@@ -271,9 +271,12 @@ sortBy.on("change", function(){
     rect.exit().remove()
     rect.attr("width", x.bandwidth())
         .attr("height", function(d,i){return height- y(d.values.length);})
+        .attr("y", function(d,i){return y(d.values.length);})
+        .transition()
+        .duration(1000)
+        .delay(function(d,i){return i*100})
         .attr("x", function(d){return x(d.key)})
         .attr("fill", setColorIndex(colorStyle))
-        .attr("y", function(d,i){return y(d.values.length);})
 
     let barEnter = rect.enter()
                        .append("rect")
