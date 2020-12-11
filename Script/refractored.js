@@ -192,7 +192,7 @@ sortBy.on("change", function(){
   // deze staan onder de bijbehorende chart function-
   function makeRoundedChart(data, segment, groupname, partsname, colorStyle, startingColor, events, add){
 
-    let donutData = d3.pie().sort(null).value(function(d,i){return d.values.length})(data)
+    let donutData = d3.pie().value(function(d,i){return d.values.length})(data)
     const sections = svg.append("g")
                           .attr("transform", "translate(750,400)")
                           .attr("class", groupname)

@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "homepage":"https://laupwing.github.io/frontend-data",
+  "homepage": "https://laupwing.github.io/frontend-data",
   "dependencies": {
     "chalk": "^2.4.1",
     "dotenv": "^6.1.0",
