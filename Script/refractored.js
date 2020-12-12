@@ -204,12 +204,13 @@ sortBy.on("change", function(){
                                   .append("path")
                                   .attr("class",partsname)
 
-    enterSection.attr("fill", startingColorPie(startingColor))
+    enterSection
+      // .attr("fill", startingColorPie(startingColor))
               .transition()
-              .duration(1000)
+            //   .duration(2000)
               .attr("d", segment)
               .delay(function(d,i){return i*100})
-              .duration(2000)
+            //   .duration(2000)
               .delay(function(d,i){return i*100})
               .attr("fill", setColorIndexPie(colorStyle))
     const donutSections =  d3.selectAll(".donut.sections")
